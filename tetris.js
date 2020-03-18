@@ -7,6 +7,7 @@ const context = canvas.getContext('2d');
 context.scale(20,20);
 //to make row dissapear after filled
 function arenaSweep(){
+  let rowCount = 1;
   outer: for(let y = arena.length - 1; y > 0; y--){
     for(let x = 0; x < arena[y].length; x++){
       if(arena[y][x] === 0){
@@ -16,6 +17,10 @@ function arenaSweep(){
     const row = arena.splice(y,1)[0].fill(0);
     arena.unshift(row);
     y++;
+//10 points for every row deleted
+    player.score += rowCount * 10;
+//for each row you get your score doubles
+    rowCount *=2;
   }
 
 }
@@ -135,6 +140,7 @@ function playerDrop(){
       merge(arena,player);
       playerReset();
       arenaSweep();
+      updateScore();
     }
     dropCounter = 0;
 }
@@ -155,6 +161,8 @@ function playerReset(){
 //resets the game after you reach the top
   if(collide(arena,player)){
     arena.forEach(row => row.fill(0));
+    player.score = 0;
+    updateScore();
   }
 }
 
@@ -220,7 +228,7 @@ function update(time = 0){
 }
 
 function updateScore(){
-  document.getElementbyId('score').innertext = player.score;
+  document.getElementById('score').innerText = player.score;
 }
 //20 units high & 12 wide
 const arena = createMatrix(12,20);
@@ -254,4 +262,5 @@ document.addEventListener('keydown', event =>{
 });
 
 playerReset();
+updateScore();
 update ();
